@@ -1,98 +1,69 @@
 <?php
-// Example categories - you can later fetch these from a database
-$categories = ["Restaurants", "Health & Wellness", "Retail", "Education", "Automotive", "Technology", "Finance"];
+date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>BizFinder - Your Local Business Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Business Directory</title>
+    <link rel="icon" type="image/x-icon" href="ShareBestie_Logo.png">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f4;
-        }
-        header {
-            background-color: #007BFF;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            padding: 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
-        .about {
-            margin-bottom: 30px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .search-bar {
-            margin-bottom: 30px;
-        }
-        .search-bar input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .search-bar input[type="submit"] {
-            padding: 10px 15px;
-            font-size: 16px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .categories {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .categories ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .categories li {
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; }
+        .time-bar { background: #f4f4f4; padding: 5px 10px; text-align: center; font-size: 14px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #333; color: #fff; padding: 10px 20px; }
+        .nav-links a { margin: 0 10px; color: #fff; text-decoration: none; }
+        .search-bar { padding: 20px; text-align: center; }
+        .categories { padding: 20px; }
+        .categories ul { list-style-type: none; padding: 0; text-align: center}
+        .categories li { margin: 8px 0; background: #f0f0f0; padding: 10px; }
+        .footer { background: #333; color: #fff; text-align: center; padding: 10px; position: fixed; width: 100%; bottom: 0; }
+        .logo { height: 40px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>BizFinder</h1>
-    <p>Miagao Business Directory</p>
-</header>
+<div class="time-bar">
+    <?php echo date("l, F j, Y - h:i A"); ?>
+</div>
 
-<div class="container">
-    <section class="about">
-        <h2>About BizFinder</h2>
-        <p>BizFinder helps you discover businesses near you. Whether you're looking for a restaurant, a car repair shop, or a tech service provider, we’ve got you covered.</p>
-    </section>
+<div class="header">
+    <div>
+        <img src="logo.png" alt="Business Logo" class="logo">
+    </div>
+    <div class="nav-links">
+        <a href="index.php">Home</a>
+        <a href="#">About</a>
+        <a href="#">Announcements</a>
+        <a href="#">Map</a>
+    </div>
+</div>
 
-    <section class="search-bar">
-        <form action="search.php" method="GET">
-            <input type="text" name="query" placeholder="Search for businesses, services..." required>
-            <input type="submit" value="Search">
-        </form>
-    </section>
+<div class="search-bar">
+    <input type="text" placeholder="Search businesses..." style="width: 60%; padding: 10px; font-size: 16px;">
+    <button style="padding: 10px; font-size: 16px;">Search</button>
+</div>
 
-    <section class="categories">
-        <h2>Browse Categories</h2>
-        <ul>
-            <?php foreach ($categories as $category): ?>
-                <li><?php echo htmlspecialchars($category); ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+<div class="categories">
+    <h2>Categories</h2>
+   <ul>
+    <li><a href="category.php?name=Food%20and%20Beverage">Food & Beverage</a></li>
+    <li><a href="category.php?name=Tech%20Services">Tech Services</a></li>
+    <li><a href="category.php?name=Retail%20and%20Fashion">Retail & Fashion</a></li>
+    <li><a href="category.php?name=Health%20and%20Wellness">Health & Wellness</a></li>
+    <li><a href="category.php?name=Home%20Services">Home Services</a></li>
+    <li><a href="category.php?name=Education">Education</a></li>
+    <li><a href="category.php?name=Transportation">Transportation</a></li>
+    <li><a href="category.php?name=Arts%20and%20Crafts">Arts & Crafts</a></li>
+    <li><a href="category.php?name=Finance%20and%20Legal">Finance & Legal</a></li>
+    <li><a href="category.php?name=Real%20Estate">Real Estate</a></li>
+</ul>
+</div>
+
+<div class="footer">
+    &copy; <?php echo date("Y"); ?> My Business Directory. All rights reserved.
 </div>
 
 </body>
 </html>
-
