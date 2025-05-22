@@ -1,5 +1,10 @@
 <?php
 date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
+
+include 'dbConnect.php'; // Replace with your actual connection file
+
+$sql = "SELECT business_id, name, description, contact_info, location FROM business";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +23,7 @@ date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
         .categories { padding: 20px; }
         .categories ul { list-style-type: none; padding: 0; text-align: center}
         .categories li { margin: 8px 0; background: #f0f0f0; padding: 10px; }
-        .footer { background: #333; color: #fff; text-align: center; padding: 10px; position: fixed; width: 100%; bottom: 0; }
+        .footer { background: #333; color: #fff; text-align: center; padding: 10px;width: 100%; bottom: 0; }
         .logo { height: 40px; }
     </style>
 </head>
@@ -40,14 +45,16 @@ date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
     </div>
 </div>
 
-<div class="search-bar">
-    <input type="text" placeholder="Search businesses..." style="width: 60%; padding: 10px; font-size: 16px;">
-    <button style="padding: 10px; font-size: 16px;">Search</button>
+<div class="search-bar"> <!-- adds search functionality-->
+    <form method="GET" action="search.php">
+        <input type="text" name="search" placeholder="Search businesses..." style="width: 60%; padding: 10px; font-size: 16px;">
+        <button style="padding: 10px; font-size: 16px;">Search</button>
+    </form>
 </div>
 
 <div class="categories">
     <h2>Categories</h2>
-   <ul>
+   <ul class="categories-flexbox">
     <li><a href="category.php?name=Food%20and%20Beverage">Food & Beverage</a></li>
     <li><a href="category.php?name=Tech%20Services">Tech Services</a></li>
     <li><a href="category.php?name=Retail%20and%20Fashion">Retail & Fashion</a></li>
@@ -59,6 +66,33 @@ date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
     <li><a href="category.php?name=Finance%20and%20Legal">Finance & Legal</a></li>
     <li><a href="category.php?name=Real%20Estate">Real Estate</a></li>
 </ul>
+</div>
+
+<div class="business"> <!--makes businesses appear in index--> 
+    <h2>Registered Businesses</h2>
+    <table class="table-flexbox">
+    <tr>
+        <th>ID</th>
+        <th>Business Name</th>
+        <th>Description</th>
+        <th>Contact Info</th>
+        <th>Location</th>
+    </tr>
+
+    <?php if ($result && $result->num_rows > 0): ?>
+        <?php while($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?= htmlspecialchars($row["business_id"]) ?></td>
+                <td><?= htmlspecialchars($row["name"]) ?></td>
+                <td><?= htmlspecialchars($row["description"]) ?></td>
+                <td><?= htmlspecialchars($row["contact_info"]) ?></td>
+                <td><?= htmlspecialchars($row["location"]) ?></td>
+            </tr>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr><td colspan="5">No businesses found.</td></tr>
+    <?php endif; ?>
+</table>
 </div>
 
 <div class="footer">

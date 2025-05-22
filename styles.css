@@ -16,3 +16,22 @@
 .nav li a:hover {
     text-decoration: underline;
 }
+
+.categories-flexbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.categories-flexbox li {
+    flex: 1 1 200px;
+    list-style: none;
+    background: #f0f0f0;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
