@@ -3,8 +3,18 @@ date_default_timezone_set("Asia/Manila"); // Set your preferred timezone
 
 include 'dbConnect.php'; // Replace with your actual connection file
 
-$sql = "SELECT business_id, name, description, contact_info, location FROM business";
-$result = $conn->query($sql);
+$category = isset($_GET['category']) ? $_GET['category'] : null;
+
+if($category){
+    $stmt = $conn->prepare("SELECT business_id, name FROM business WHERE category_id = ?");
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+}else{
+    $sql = "SELECT business_id, name, description, contact_info, location FROM business";
+    $result = $conn->query($sql);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -54,17 +64,18 @@ $result = $conn->query($sql);
 
 <div class="categories">
     <h2>Categories</h2>
-   <ul class="categories-flexbox">
-    <li><a href="category.php?name=Food%20and%20Beverage">Food & Beverage</a></li>
-    <li><a href="category.php?name=Tech%20Services">Tech Services</a></li>
-    <li><a href="category.php?name=Retail%20and%20Fashion">Retail & Fashion</a></li>
-    <li><a href="category.php?name=Health%20and%20Wellness">Health & Wellness</a></li>
-    <li><a href="category.php?name=Home%20Services">Home Services</a></li>
-    <li><a href="category.php?name=Education">Education</a></li>
-    <li><a href="category.php?name=Transportation">Transportation</a></li>
-    <li><a href="category.php?name=Arts%20and%20Crafts">Arts & Crafts</a></li>
-    <li><a href="category.php?name=Finance%20and%20Legal">Finance & Legal</a></li>
-    <li><a href="category.php?name=Real%20Estate">Real Estate</a></li>
+   <ul class="categories-flexbox"> <!-- added filtering-->
+    <li><a href="index.php?category=C01">Food & Beverage</a></li>
+    <li><a href="index.php?category=C02">Tech Services</a></li>
+    <li><a href="index.php?category=C03">Retail & Fashion</a></li>
+    <li><a href="index.php?category=C04">Health & Wellness</a></li>
+    <li><a href="index.php?category=C05">Home Services</a></li>
+    <li><a href="index.php?category=C06">Education</a></li>
+    <li><a href="index.php?category=C07">Transportation</a></li>
+    <li><a href="index.php?category=C08">Arts & Crafts</a></li>
+    <li><a href="index.php?category=C09">Finance & Legal</a></li>
+    <li><a href="index.php?category=C10">Real Estate</a></li>
+    <li><a href="index.php">Show All</a></li>
 </ul>
 </div>
 
@@ -72,21 +83,17 @@ $result = $conn->query($sql);
     <h2>Registered Businesses</h2>
     <table class="table-flexbox">
     <tr>
-        <th>ID</th>
         <th>Business Name</th>
-        <th>Description</th>
-        <th>Contact Info</th>
-        <th>Location</th>
     </tr>
 
     <?php if ($result && $result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?>
             <tr>
-                <td><?= htmlspecialchars($row["business_id"]) ?></td>
-                <td><?= htmlspecialchars($row["name"]) ?></td>
-                <td><?= htmlspecialchars($row["description"]) ?></td>
-                <td><?= htmlspecialchars($row["contact_info"]) ?></td>
-                <td><?= htmlspecialchars($row["location"]) ?></td>
+                <td>
+                    <a href="profile.php?id=<?=$row['business_id'] ?>">
+                    <?= htmlspecialchars($row["name"]) ?>
+                    </a>
+                </td>
             </tr>
         <?php endwhile; ?>
     <?php else: ?>
