@@ -3,7 +3,7 @@ include 'dbConnect.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 
-$sql = "SELECT business_id, name, description, contact_info, location FROM business WHERE name LIKE '%$search%'";
+$sql = "SELECT business.business_id, business.name, business_category.category_name FROM business JOIN business_category ON business.category_id = business_category.category_id WHERE business.name LIKE '%$search%' OR business_category.category_name LIKE '%$search%'";
 $result = $conn->query($sql);
 ?>
 
@@ -35,19 +35,15 @@ $result = $conn->query($sql);
     <?php if ($result && $result->num_rows > 0): ?>
         <table>
             <tr>
-                <th>ID</th>
                 <th>Business Name</th>
-                <th>Description</th>
-                <th>Contact Info</th>
-                <th>Location</th>
             </tr>
             <?php while($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?= htmlspecialchars($row["business_id"]) ?></td>
-                    <td><?= htmlspecialchars($row["name"]) ?></td>
-                    <td><?= htmlspecialchars($row["description"]) ?></td>
-                    <td><?= htmlspecialchars($row["contact_info"]) ?></td>
-                    <td><?= htmlspecialchars($row["location"]) ?></td>
+                    <td>
+                        <a href="profile.php?id=<?= urlencode($row['business_id']) ?>">
+                            <?= htmlspecialchars($row["name"]) ?>
+                        </a>
+                    </td>
                 </tr>
             <?php endwhile; ?>
         </table>

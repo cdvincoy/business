@@ -46,6 +46,7 @@ if ($business_id > 0) {
 </head>
 <body>
 <div class="container">
+    <a href="index.php">Back to Home</a>
     <h1><?= htmlspecialchars($business['name']) ?></h1>
     <div class="info">
         <p>Category: <?= htmlspecialchars($business['category_name']) ?></p>

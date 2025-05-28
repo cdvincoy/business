@@ -4,7 +4,7 @@ include 'dbConnect.php';
 
 $sql = "INSERT INTO admin (name, username, password, email)
     VALUES 
-        ('Jane Doe', 'admin_jane', 'password123', 'jane.doe@example.com')";
+        ('Jane Doe', 'admin_jane', '$2y$10$252b24zBsvtphtPCEAWJa.XPCqu0pJu0xeRJn9qXDa9L5KSjNyx3e', 'jane.doe@example.com')";
 $conn->query($sql);
 
 $sql ="INSERT INTO business_category (category_id, category_name, description) 

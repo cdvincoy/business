@@ -82,16 +82,12 @@ if($category){
 <div class="business"> <!--makes businesses appear in index--> 
     <h2>Registered Businesses</h2>
     <table class="table-flexbox">
-    <tr>
-        <th>Business Name</th>
-    </tr>
-
     <?php if ($result && $result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?>
             <tr>
                 <td>
-                    <a href="profile.php?id=<?=$row['business_id'] ?>">
-                    <?= htmlspecialchars($row["name"]) ?>
+                    <a href="profile.php?id=<?= $row['business_id'] ?>">
+                        <?= htmlspecialchars($row["name"]) ?>
                     </a>
                 </td>
             </tr>
