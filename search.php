@@ -3,7 +3,7 @@ include 'dbConnect.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 
-$sql = "SELECT business.business_id, business.name, business_category.category_name FROM business JOIN business_category ON business.category_id = business_category.category_id WHERE business.name LIKE '%$search%' OR business_category.category_name LIKE '%$search%'";
+$sql = "SELECT DISTINCT business.business_id, business.name, business_category.category_name FROM business JOIN business_category ON business.category_id = business_category.category_id LEFT JOIN products_and_services ON business.business_id = products_and_services.business_id WHERE business.name LIKE '%$search%' OR business_category.category_name LIKE '%$search%' OR products_and_services.item_name LIKE '%$search%'";
 $result = $conn->query($sql);
 ?>
 

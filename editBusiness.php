@@ -1,28 +1,11 @@
 <?php
 include 'DBConnect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["business_id"]) && !isset($_POST["submit"])) {
-    $businessID = $_POST["business_id"];
+$businessID = null;
+$business = null;
+$products = null;
 
-    $sql = "SELECT * FROM business WHERE business_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $businessID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows === 1) {
-        $business = $result->fetch_assoc();
-    } else {
-        echo "Business not found.";
-        exit;
-    }
-    $product_sql = "SELECT * FROM products_and_services WHERE business_id = ?";
-    $product_stmt = $conn->prepare($product_sql);
-    $product_stmt->bind_param("i", $businessID);
-    $product_stmt->execute();
-    $products = $product_stmt->get_result();
-
-} elseif (isset($_POST["submit"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     $businessID = $_POST["business_id"];
     $name = $_POST["name"];
     $description = $_POST["description"];
@@ -36,24 +19,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["business_id"]) && !iss
 
     header("Location: admin_dashboard.php");
     exit;
-}
+} elseif (isset($_POST["business_id"]) || isset($_GET["business_id"])) {
+    $businessID = $_POST["business_id"] ?? $_GET["business_id"];
 
-if (isset($_POST["add_product"])) {
-    $item_id = uniqid("item_");
-    $item_name = $_POST["item_name"];
-    $item_description = $_POST["item_description"];
-    $item_price = $_POST["item_price"];
-    $businessID = $_POST["business_id"];
-    $categoryID = $_POST["category_id"];
+    $sql = "SELECT * FROM business WHERE business_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $businessID);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    $add_stmt = $conn->prepare("INSERT INTO products_and_services (item_id, business_id, category_id, item_name, description, price) VALUES (?, ?, ?, ?, ?, ?)");
-    $add_stmt->bind_param("sisssd", $item_id, $businessID, $categoryID, $item_name, $item_description, $item_price);
-    $add_stmt->execute();
+    if ($result->num_rows === 1) {
+        $business = $result->fetch_assoc();
+    } else {
+        echo "Business not found.";
+        exit;
+    }
 
-    header("Location: editBusiness.php");
+    $product_sql = "SELECT * FROM products_and_services WHERE business_id = ?";
+    $product_stmt = $conn->prepare($product_sql);
+    $product_stmt->bind_param("i", $businessID);
+    $product_stmt->execute();
+    $products = $product_stmt->get_result();
+} else {
+    echo "No business ID provided.";
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -118,13 +110,14 @@ if (isset($_POST["add_product"])) {
             <td><?= htmlspecialchars($product['description']) ?></td>
             <td><?= htmlspecialchars($product['price']) ?></td>
 
-            <td align = 'center'> 
-                    <form method="POST" action="deleteBusiness.php">
-                        <input type='text' style='display:none;' name='business_id' value='<?= $row["business_id"] ?>'>
-                        <button type='submit'>Delete</button>
+            <td align = "center"> 
+                    <form method="POST" action="deleteProduct.php">
+                        <input type="hidden" name="item_id" value="<?= htmlspecialchars($product['item_id']) ?>">
+                        <input type="hidden" name="business_id" value="<?= htmlspecialchars($product['business_id']) ?>">
+                        <button type="submit">Delete</button>
                     </form>
-                    <form method="POST" action="editBusiness.php">
-                        <input type='text' style='display:none;' name='business_id' value='<?= $row["business_id"] ?>'>
+                    <form method="POST" action="editProduct.php">
+                        <input type='hidden' name='item_id' value='<?= $product["item_id"] ?>'>
                         <button type='submit'>Edit</button>
                     </form>
             </td>
@@ -132,18 +125,30 @@ if (isset($_POST["add_product"])) {
     <?php endwhile; ?>
 </table>
 
-<h3>Add New Product/Service</h3>
+<h2>Add a Product or Service</h2>
 <form method="POST" action="addProduct.php">
-    <input type="hidden" name="add_product" value="1">
     <input type="hidden" name="business_id" value="<?= $businessID ?>">
-    <input type="hidden" name="category_id" value="<?= $business['category_id'] ?>">
-    <table>
-        <tr><td>Item Name:</td><td><input type="text" name="item_name" required></td></tr>
-        <tr><td>Description:</td><td><input type="text" name="item_description"></td></tr>
-        <tr><td>Price:</td><td><input type="number" step="0.01" name="item_price"></td></tr>
-        <tr><td></td><td><input type="submit" value="Add Product"></td></tr>
+    <input type="hidden" name="category_id" value="<?= htmlspecialchars($business['category_id']) ?>">
+    <table style="width:100%">
+        <tr>
+            <td class="tlabel">Item Name</td>
+            <td><input type="text" name="item_name" required></td>
+        </tr>
+        <tr>
+            <td class="tlabel">Description</td>
+            <td><input type="text" name="item_description" required></td>
+        </tr>
+        <tr>
+            <td class="tlabel">Price</td>
+            <td><input type="number" step="0.01" name="item_price" required></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" name="add_product" value="Add Product"></td>
+        </tr>
     </table>
 </form>
+
 
 </body>
 </html>

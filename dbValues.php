@@ -51,8 +51,8 @@ $sql= "INSERT INTO products_and_services (item_id, business_id, category_id, ite
     VALUES 
         ('I001', 1, 'C01', 'Caramel Latte', 'Creamy espresso with caramel flavor', 3.50),
         ('I002', 1, 'C01', 'Blueberry Muffin', 'Soft muffin with fresh blueberries', 2.00),
-        ('I003', 2, 'C02', 'Screen Replacement', 'Phone screen repair service', 35.00),
-        ('I004', 2, 'C02', 'Laptop Diagnostics', 'Full hardware/software checkup', 15.00)";
+        ('I003', 3, 'C02', 'Screen Replacement', 'Phone screen repair service', 35.00),
+        ('I004', 3, 'C02', 'Laptop Diagnostics', 'Full hardware/software checkup', 15.00)";
 $conn->query($sql);
 
 $conn->close();
