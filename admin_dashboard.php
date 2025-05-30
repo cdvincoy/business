@@ -1,12 +1,13 @@
-<?php
+<?php // This file displays the admin dashboard and allows the admin to add, edit, and delete businesses.
 session_start();
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit;
 }
-
+// Include the database connection
 include 'dbConnect.php';
 
+// Get all businesses from the database
 $sql = "SELECT business_id, business_owner, category_id, name, description, contact_info, location FROM business";
 $result = $conn->query($sql);
 
@@ -25,6 +26,7 @@ $categoryNames = [
 ];
 ?>
 
+<!-- HTML code for the admin dashboard -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,19 +67,50 @@ $categoryNames = [
         }
         .category-reference {
             width: 300px;
-            margin-top: 48px; /* Aligns with the form table */
+            margin-top: 48px;
         }
         .category-reference caption {
             font-weight: bold;
             margin-bottom: 10px;
             text-align: left;
         }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
     </style>
 </head>
 <body>
 
+<!-- Welcome message and logout link -->
 <h2>Welcome, <?php echo $_SESSION['admin']; ?>! <a href="logout.php" style="float: right; font-size: 16px;">Logout</a></h2>
 
+<?php
+// Display success message if set
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="alert success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
+    unset($_SESSION['success_message']); // Clear the message
+}
+
+// Display error message if set
+if (isset($_SESSION['error_message'])) {
+    echo '<div class="alert error">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+    unset($_SESSION['error_message']); // Clear the message
+}
+?>
+
+<!-- Add Business Form -->
 <h3>Add a Business</h3>
 <div class="add-business-section">
     <div class="add-form">
@@ -128,7 +161,7 @@ $categoryNames = [
             </table>
         </form>
     </div>
-
+    <!-- Category Reference Table -->
     <table class="category-reference">
         <caption>Category Reference</caption>
         <tr>
@@ -144,6 +177,7 @@ $categoryNames = [
     </table>
 </div>
 
+<!-- Registered Businesses Table -->
 <h3>Registered Businesses</h3>
 <table>
     <tr>
@@ -157,7 +191,8 @@ $categoryNames = [
         <th>Actions</th>
     </tr>
 
-    <?php if ($result && $result->num_rows > 0): ?>
+    <?php if ($result && $result->num_rows > 0): ?> 
+        <!-- Display all businesses in the database -->
         <?php while($row = $result->fetch_assoc()): ?> 
             <tr>
                 <td><?= htmlspecialchars($row["business_id"]) ?></td>
