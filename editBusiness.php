@@ -1,154 +1,82 @@
-<?php
+<?php // This file edits a product or service in the database.
 include 'DBConnect.php';
 
-$businessID = null;
-$business = null;
-$products = null;
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["item_id"]) && !isset($_POST["update_product"])) {
+    $itemID = $_POST["item_id"];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
-    $businessID = $_POST["business_id"];
-    $name = $_POST["name"];
-    $description = $_POST["description"];
-    $contact = $_POST["contact_info"];
-    $location = $_POST["location"];
-    $category = $_POST["category"];
-
-    $update = $conn->prepare("UPDATE business SET name=?, description=?, contact_info=?, location=?, category_id=? WHERE business_id=?");
-    $update->bind_param("sssssi", $name, $description, $contact, $location, $category, $businessID);
-    $update->execute();
-
-    header("Location: admin_dashboard.php");
-    exit;
-} elseif (isset($_POST["business_id"]) || isset($_GET["business_id"])) {
-    $businessID = $_POST["business_id"] ?? $_GET["business_id"];
-
-    $sql = "SELECT * FROM business WHERE business_id = ?";
+    // Get the product from the database
+    $sql = "SELECT * FROM products_and_services WHERE item_id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $businessID);
+    $stmt->bind_param("s", $itemID);
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Check if the product was found
     if ($result->num_rows === 1) {
-        $business = $result->fetch_assoc();
+        $product = $result->fetch_assoc();
     } else {
-        echo "Business not found.";
+        echo "Product not found.";
         exit;
     }
+} elseif (isset($_POST["update_product"])) {
+    // Get the item_id, business_id, category_id, item_name, item_description, and item_price from the form
+    $itemID = $_POST["item_id"];
+    $businessID = $_POST["business_id"];
+    $categoryID = $_POST["category_id"];
+    $itemName = $_POST["item_name"];
+    $itemDesc = $_POST["item_description"];
+    $itemPrice = $_POST["item_price"];
 
-    $product_sql = "SELECT * FROM products_and_services WHERE business_id = ?";
-    $product_stmt = $conn->prepare($product_sql);
-    $product_stmt->bind_param("i", $businessID);
-    $product_stmt->execute();
-    $products = $product_stmt->get_result();
-} else {
-    echo "No business ID provided.";
+    // Update the product in the database
+    $sql = "UPDATE products_and_services SET item_name=?, description=?, price=? WHERE item_id=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssds", $itemName, $itemDesc, $itemPrice, $itemID);
+    $stmt->execute();
+
+    // Redirect to the editBusiness.php page
+    echo "<form id='redirectForm' method='POST' action='editBusiness.php'>
+            <input type='hidden' name='business_id' value='" . htmlspecialchars($businessID) . "'>
+          </form>
+          <script>document.getElementById('redirectForm').submit();</script>";
     exit;
 }
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Business</title>
-    <style>
-        table, td, th {
-            border: 1px solid #ccc;
-            border-collapse: collapse;
-            padding: 8px;
-        }
-        table {
-            width: 100%;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Edit Product or Service - Business Directory</title>
 </head>
 <body>
 
-<h2>Edit Business</h2>
-<form method="POST" action="editBusiness.php">
-    <input type="hidden" name="business_id" value="<?= $businessID ?>">
-    <table>
-        <tr><td>Name:</td><td><input type="text" name="name" value="<?= htmlspecialchars($business['name']) ?>"></td></tr>
-        <tr><td>Description:</td><td><input type="text" name="description" value="<?= htmlspecialchars($business['description']) ?>"></td></tr>
-        <tr><td>Contact Info:</td><td><input type="text" name="contact_info" value="<?= htmlspecialchars($business['contact_info']) ?>"></td></tr>
-        <tr><td>Location:</td><td><input type="text" name="location" value="<?= htmlspecialchars($business['location']) ?>"></td></tr>
-        <tr>
-            <td>Category:</td>
-            <td>
-                <select name="category">
-                    <option value="C01" <?= $business['category_id'] == "C01" ? "selected" : "" ?>>Food & Beverage</option>
-                    <option value="C02" <?= $business['category_id'] == "C02" ? "selected" : "" ?>>Tech Services</option>
-                    <option value="C03" <?= $business['category_id'] == "C03" ? "selected" : "" ?>>Retail & Fashion</option>
-                    <option value="C04" <?= $business['category_id'] == "C04" ? "selected" : "" ?>>Health & Wellness</option>
-                    <option value="C05" <?= $business['category_id'] == "C05" ? "selected" : "" ?>>Home Services</option>
-                    <option value="C06" <?= $business['category_id'] == "C06" ? "selected" : "" ?>>Education</option>
-                    <option value="C07" <?= $business['category_id'] == "C07" ? "selected" : "" ?>>Transportation</option>
-                    <option value="C08" <?= $business['category_id'] == "C08" ? "selected" : "" ?>>Arts & Entertainment</option>
-                    <option value="C09" <?= $business['category_id'] == "C09" ? "selected" : "" ?>>Finance & Legal</option>
-                    <option value="C10" <?= $business['category_id'] == "C10" ? "selected" : "" ?>>Real Estate</option>
-                </select>
-            </td>
-        </tr>
-        <tr><td></td><td><input type="submit" name="submit" value="Update Business"></td></tr>
-    </table>
-</form>
+<!-- Display the title of the page -->
+<h2>Edit a Product or Service</h2>
 
-<h3>Products and Services</h3>
-<table>
-    <tr>
-        <th>Item ID</th>
-        <th>Item Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Options</th>
-    </tr>
-    <?php while ($product = $products->fetch_assoc()): ?>
-        <tr>
-            <td><?= htmlspecialchars($product['item_id']) ?></td>
-            <td><?= htmlspecialchars($product['item_name']) ?></td>
-            <td><?= htmlspecialchars($product['description']) ?></td>
-            <td><?= htmlspecialchars($product['price']) ?></td>
-
-            <td align = "center"> 
-                    <form method="POST" action="deleteProduct.php">
-                        <input type="hidden" name="item_id" value="<?= htmlspecialchars($product['item_id']) ?>">
-                        <input type="hidden" name="business_id" value="<?= htmlspecialchars($product['business_id']) ?>">
-                        <button type="submit">Delete</button>
-                    </form>
-                    <form method="POST" action="editProduct.php">
-                        <input type='hidden' name='item_id' value='<?= $product["item_id"] ?>'>
-                        <button type='submit'>Edit</button>
-                    </form>
-            </td>
-        </tr>
-    <?php endwhile; ?>
-</table>
-
-<h2>Add a Product or Service</h2>
-<form method="POST" action="addProduct.php">
-    <input type="hidden" name="business_id" value="<?= $businessID ?>">
-    <input type="hidden" name="category_id" value="<?= htmlspecialchars($business['category_id']) ?>">
+<!-- Form to edit the product or service -->
+<form method="POST" action="editProduct.php">
+    <input type="hidden" name="item_id" value="<?= htmlspecialchars($product['item_id']) ?>">
+    <input type="hidden" name="business_id" value="<?= htmlspecialchars($product['business_id']) ?>">
+    <input type="hidden" name="category_id" value="<?= htmlspecialchars($product['category_id']) ?>">
     <table style="width:100%">
         <tr>
             <td class="tlabel">Item Name</td>
-            <td><input type="text" name="item_name" required></td>
+            <td><input type="text" name="item_name" value="<?= htmlspecialchars($product['item_name']) ?>" required></td>
         </tr>
         <tr>
             <td class="tlabel">Description</td>
-            <td><input type="text" name="item_description" required></td>
+            <td><input type="text" name="item_description" value="<?= htmlspecialchars($product['description']) ?>" required></td>
         </tr>
         <tr>
             <td class="tlabel">Price</td>
-            <td><input type="number" step="0.01" name="item_price" required></td>
+            <td><input type="number" step="0.01" name="item_price" value="<?= htmlspecialchars($product['price']) ?>" required></td>
         </tr>
         <tr>
             <td></td>
-            <td><input type="submit" name="add_product" value="Add Product"></td>
+            <td><input type="submit" name="update_product" value="Update Product"></td>
         </tr>
     </table>
 </form>
-
 
 </body>
 </html>
