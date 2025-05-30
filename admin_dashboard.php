@@ -5,64 +5,106 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
-include 'dbConnect.php'; // Replace with your actual connection file
+include 'dbConnect.php';
 
-$sql = "SELECT business_id, category_id, name, description, contact_info, location FROM business";
+$sql = "SELECT business_id, business_owner, category_id, name, description, contact_info, location FROM business";
 $result = $conn->query($sql);
+
+// Define categories
+$categoryNames = [
+    'C01' => 'Food & Beverage',
+    'C02' => 'Tech Services',
+    'C03' => 'Retail & Fashion',
+    'C04' => 'Health & Wellness',
+    'C05' => 'Home Services',
+    'C06' => 'Education',
+    'C07' => 'Transportation',
+    'C08' => 'Arts & Entertainment',
+    'C09' => 'Finance & Legal',
+    'C10' => 'Real Estate'
+];
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Miagao Business Directory</title>
     <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
             margin-top: 20px;
         }
         th, td {
-            border: 1px solid #aaa;
+            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #eee;
+            background-color: #f4f4f4;
+        }
+        input[type="text"], select {
+            width: 200px;
+            padding: 5px;
+        }
+        .actions form {
+            display: inline;
+        }
+        .add-business-section {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .add-form {
+            flex: 1;
+        }
+        .category-reference {
+            width: 300px;
+            margin-top: 48px; /* Aligns with the form table */
+        }
+        .category-reference caption {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 
-<h2>Welcome, <?php echo $_SESSION['admin']; ?>!</h2>
-<a href="logout.php">Logout</a>
+<h2>Welcome, <?php echo $_SESSION['admin']; ?>! <a href="logout.php" style="float: right; font-size: 16px;">Logout</a></h2>
 
-<h2>Add a Business</h2>
+<h3>Add a Business</h3>
 <div class="add-business-section">
     <div class="add-form">
         <form method="POST" action="addBusiness.php">
-            <table style="width:100%">
+            <table>
                 <tr>
-                    <td> Business Ownder:</td>
-                    <td><input="text" name="business_ownder" required</td>
+                    <td>Business Owner:</td>
+                    <td><input type="text" name="business_owner" required></td>
                 </tr>
                 <tr>
-                    <td class="tlabel">Business Name:</td>
-                    <td><input type="text" name="name"></td>
+                    <td>Business Name:</td>
+                    <td><input type="text" name="name" required></td>
                 </tr>
                 <tr>
-                    <td class="tlabel">Description:</td>
+                    <td>Description:</td>
                     <td><input type="text" name="description"></td>
                 </tr>
                 <tr>
-                    <td class="tlabel">Contact Info:</td>
+                    <td>Contact Info:</td>
                     <td><input type="text" name="contact_info"></td>
                 </tr>
                 <tr>
-                    <td class="tlabel">Location:</td>
+                    <td>Location:</td>
                     <td><input type="text" name="location"></td>
                 </tr>
                 <tr>
-                    <td class="tlabel">Category:</td>
+                    <td>Category:</td>
                     <td>
                         <select name="category" required>
                             <option value="">Select Category</option>
@@ -80,8 +122,8 @@ $result = $conn->query($sql);
                     </td>
                 </tr>
                 <tr>
-                    <td class="tlabel"></td>
-                    <td><input type="submit"></td>
+                    <td></td>
+                    <td><input type="submit" value="Add Business"></td>
                 </tr>
             </table>
         </form>
@@ -101,46 +143,45 @@ $result = $conn->query($sql);
         <?php endforeach; ?>
     </table>
 </div>
-    
 
 <h3>Registered Businesses</h3>
 <table>
     <tr>
         <th>ID</th>
-        <th>Category ID</th>
+        <th>Business Owner</th>
+        <th>Category</th>
         <th>Business Name</th>
         <th>Description</th>
         <th>Contact Info</th>
         <th>Location</th>
-        <th>Options</th>
+        <th>Actions</th>
     </tr>
 
     <?php if ($result && $result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?> 
-            <tr> <!-- add, delete, edit function, if iclick ang edit, show products table para i add delete and edit man, add form para mag add business-->
+            <tr>
                 <td><?= htmlspecialchars($row["business_id"]) ?></td>
+                <td><?= htmlspecialchars($row["business_owner"]) ?></td>
                 <td><?= htmlspecialchars($row["category_id"]) ?></td>
                 <td><?= htmlspecialchars($row["name"]) ?></td>
                 <td><?= htmlspecialchars($row["description"]) ?></td>
                 <td><?= htmlspecialchars($row["contact_info"]) ?></td>
                 <td><?= htmlspecialchars($row["location"]) ?></td>
-
-                <td align = 'center'> 
-                    <form method="POST" action="deleteBusiness.php">
-                        <input type='text' style='display:none;' name='business_id' value='<?= $row["business_id"] ?>'>
-                        <button type='submit'>Delete</button>
+                <td class="actions">
+                    <form method="POST" action="deleteBusiness.php" onsubmit="return confirm('Are you sure you want to delete this business?');">
+                        <input type="hidden" name="business_id" value="<?= $row["business_id"] ?>">
+                        <input type="submit" value="Delete">
                     </form>
                     <form method="POST" action="editBusiness.php">
-                        <input type='text' style='display:none;' name='business_id' value='<?= $row["business_id"] ?>'>
-                        <button type='submit'>Edit</button>
+                        <input type="hidden" name="business_id" value="<?= $row["business_id"] ?>">
+                        <input type="submit" value="Edit">
                     </form>
                 </td>
             </tr>
         <?php endwhile; ?>
     <?php else: ?>
-        <tr><td colspan="5">No businesses found.</td></tr>
+        <tr><td colspan="8">No businesses found.</td></tr>
     <?php endif; ?>
-
 </table>
 
 </body>
