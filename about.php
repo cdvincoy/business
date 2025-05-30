@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Miagao Business Directory</title>
-    <link rel="icon" type="image/x-icon" href="ShareBestie_Logo.png">
+    <link rel="icon" type="image/x-icon" href="business_directory.png">
     <style>
         body { font-family: Arial, sans-serif; margin: 0; line-height: 1.6; }
         .time-bar { background: #f4f4f4; padding: 5px 10px; text-align: center; font-size: 14px; }
