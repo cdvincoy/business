@@ -11,9 +11,10 @@ $conn->query($sql);
 $sql= "CREATE TABLE business (
     business_id     INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     category_id     VARCHAR(10) NOT NULL,
+    business_owner  VARCHAR(100) NOT NULL,
     name            VARCHAR(100) NOT NULL,
     description     TEXT,
-    contact_info    VARCHAR(20),
+    contact_info    VARCHAR(100),
     location        VARCHAR(500),
     FOREIGN KEY (category_id) REFERENCES business_category(category_id)
 )";
@@ -32,7 +33,7 @@ $sql = "CREATE TABLE products_and_services (
     item_id         VARCHAR(50) PRIMARY KEY,
     business_id     INT(10) UNSIGNED NOT NULL,
     category_id     VARCHAR(10) NOT NULL,
-    item_name       VARCHAR(50) NOT NULL,
+    item_name       VARCHAR(100) NOT NULL,
     description     TEXT,
     price           DECIMAL(10, 2),
     FOREIGN KEY (business_id) REFERENCES business(business_id),
