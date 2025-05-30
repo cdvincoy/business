@@ -1,12 +1,13 @@
-// This file contains the values for each tables in the 'business' database.
-<?php
+<?php // This file contains the values for each tables in the 'business' database.
 include 'dbConnect.php';
 
+// Insert admin values
 $sql = "INSERT INTO admin (name, username, password, email)
     VALUES 
         ('Juan Dela Cruz', 'admin_juan', '$2y$10$252b24zBsvtphtPCEAWJa.XPCqu0pJu0xeRJn9qXDa9L5KSjNyx3e', 'jdcruz@gmail.com')";
 $conn->query($sql);
 
+// Insert business_category values
 $sql ="INSERT INTO business_category (category_id, category_name, description) 
     VALUES
         ('C01', 'Food & Beverage', 'Restaurants, cafes, and food stalls'),
@@ -21,7 +22,7 @@ $sql ="INSERT INTO business_category (category_id, category_name, description)
         ('C10', 'Real Estate', 'Property sales, rentals, and brokerage services')";
 $conn->query($sql);
 
-
+// Insert business values
 $sql ="INSERT INTO business (business_id, category_id, business_owner, name, description, contact_info, location) #put category_id here siguro
     VALUES 
         (1, 'C01', 'Antonio Reyes', 'Tasty Treats Cafe', 'Cozy cafe with pastries and coffee', '09171234567', 'Baybay Norte, Miagao, Iloilo'),
@@ -46,6 +47,7 @@ $sql ="INSERT INTO business (business_id, category_id, business_owner, name, des
         (20, 'C10', 'Ronald Weasley','Bahay Mo Bato', 'Laptop and phone repair center', '09179876543', 'Palaca, Miagao, Iloilo')";
 $conn->query($sql);
 
+// Insert products_and_services values
 $sql = "INSERT INTO products_and_services (item_id, business_id, category_id, item_name, description, price) 
     VALUES 
         ('I001', 1, 'C01', 'Caramel Latte', 'Creamy espresso with caramel flavor', 85.50),
