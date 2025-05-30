@@ -71,9 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="nav-links">
             <a href="index.php">Home</a>
-            <a href="#">About</a>
-            <a href="#">Announcements</a>
-            <a href="#">Map</a>
+            <a href="about.php">About</a>
+            <a href="https://www.miagao.gov.ph/news-and-events/">Announcements</a>
+            <a href="https://www.google.com/maps/place/Miagao,+Iloilo/data=!4m2!3m1!1s0x33ae5b8a7fae6ec5:0x4a967dd317139cb1?sa=X&ved=1t:242&ictx=111">Map</a>
         </div>
     </div>
     
