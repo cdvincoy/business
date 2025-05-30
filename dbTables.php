@@ -1,6 +1,7 @@
-<?php
+<?php // This file creates the tables in the database.
     include 'dbConnect.php';
 
+// Create business_category table
 $sql = "CREATE TABLE business_category (
     category_id     VARCHAR(10) PRIMARY KEY,
     category_name   VARCHAR(50) NOT NULL,
@@ -8,6 +9,7 @@ $sql = "CREATE TABLE business_category (
 )";
 $conn->query($sql);
 
+// Create business table
 $sql= "CREATE TABLE business (
     business_id     INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     category_id     VARCHAR(10) NOT NULL,
@@ -20,6 +22,7 @@ $sql= "CREATE TABLE business (
 )";
 $conn->query($sql);
 
+// Create admin table
 $sql = "CREATE TABLE admin (
     admin_id        INT(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(50) NOT NULL,
@@ -29,6 +32,7 @@ $sql = "CREATE TABLE admin (
 )";
 $conn->query($sql);
 
+// Create products_and_services table
 $sql = "CREATE TABLE products_and_services (
     item_id         VARCHAR(50) PRIMARY KEY,
     business_id     INT(10) UNSIGNED NOT NULL,
